@@ -6,16 +6,16 @@ import time
 
 
 
-def collect_data():
+def collect_data(interface):
 
     tmp_bytes = {"bytes_recv":0,"bytes_sent":0}
 
 
     tmp_bytes = {}
-    n = 0.1
+    n = 0.25
     time.sleep(n)
     os.system("clear")
-    raw_vals = str(psutil.net_io_counters(True)["en0"])
+    raw_vals = str(psutil.net_io_counters(True)[interface])
     raw_vals = raw_vals[7:len(raw_vals) - 1]
     tmp_lst = raw_vals.split(', ')
     val_dict = {}
@@ -24,17 +24,17 @@ def collect_data():
         tmp = val.split("=")
         val_dict[tmp[0]] = tmp[1]
 
-    tmp_bytes["bytes_sent"] = int(val_dict["bytes_sent"])/n
-    tmp_bytes["bytes_recv"] = int(val_dict["bytes_recv"])/n
+    tmp_bytes["bytes_sent"] = float(val_dict["bytes_sent"])/(1000*n)
+    tmp_bytes["bytes_recv"] = float(val_dict["bytes_recv"])/(1000*n)
 
 
 
     if check_file_exists("stats.csv"):
         bytes_wite = open("stats.csv",'a')
-        bytes_wite.write(str(int(tmp_bytes["bytes_recv"])/1000)+","+str(int(tmp_bytes["bytes_sent"])/1000)+","+str(datetime.now())+"\n")
+        bytes_wite.write(str((tmp_bytes["bytes_recv"]))+","+str((tmp_bytes["bytes_sent"]))+","+str(datetime.now())+"\n")
 
 
-    return_values = str(int(tmp_bytes["bytes_recv"])/1000) + ":" + str(int(tmp_bytes["bytes_sent"])/1000)
+    return_values = str((tmp_bytes["bytes_recv"])) + ":" + str((tmp_bytes["bytes_sent"]))
       
     return return_values
        

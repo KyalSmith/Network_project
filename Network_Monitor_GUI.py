@@ -10,12 +10,10 @@ class test_form(QtGui.QMainWindow):
     def __init__(self):
         super(test_form,self).__init__()
         self.setup_gui()
-        self.start_time = time.time()
-        check_thread = threading.Thread(target=self.run_check,daemon=True)
-        check_thread.start()
-        check_ip = threading.Thread(target=self.find_ip,daemon=True)
-        check_ip.start()
         self.widg.show()
+        self.interface.currentIndexChanged.connect(self.slot_1)
+        self.running = False
+        self.stop_check = False
 
 
     def setup_gui(self):
@@ -99,7 +97,31 @@ class test_form(QtGui.QMainWindow):
         for dev in devices:
             self.interface.addItem(dev)
 
-    def run_check(self):
+    def slot_1(self):
+
+        self.interface_choice(self.interface.currentText())
+
+    def interface_choice(self,interface_val):
+        print(interface_val)
+        self.start_time = time.time()
+        if  self.running:
+            
+            self.stop_check = True
+            time.sleep(1)
+            self.check_thread = threading.Thread(target=self.run_check,args=(interface_val,) ,daemon=True)
+            self.stop_check = False
+            self.check_thread.start()
+
+        else:
+            self.check_thread = threading.Thread(target=self.run_check,args=(interface_val,) ,daemon=True)
+            self.check_thread.start()
+            self.running = True
+            
+        
+        check_ip = threading.Thread(target=self.find_ip,daemon=True)
+        check_ip.start()
+
+    def run_check(self,interface_val):
 
         self.bytes_recv = 0
         self.bytes_sent = 0
@@ -111,8 +133,11 @@ class test_form(QtGui.QMainWindow):
 
         while True:
 
+
+            if self.stop_check == True:
+                break
             self.current_time = time.time()-self.start_time
-            self.val = network_monitor.collect_data()
+            self.val = network_monitor.collect_data(interface_val)
             self.val_lst = self.val.split(":")
             if not self.prev_val:
 

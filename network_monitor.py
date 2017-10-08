@@ -12,10 +12,10 @@ def collect_data():
 
 
     tmp_bytes = {}
-    n = 0.25
+    n = 0.1
     time.sleep(n)
     os.system("clear")
-    raw_vals = str(psutil.net_io_counters(True)["en3"])
+    raw_vals = str(psutil.net_io_counters(True)["en0"])
     raw_vals = raw_vals[7:len(raw_vals) - 1]
     tmp_lst = raw_vals.split(', ')
     val_dict = {}

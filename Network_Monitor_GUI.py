@@ -102,10 +102,10 @@ class test_form(QtGui.QMainWindow):
         self.interface_choice(self.interface.currentText())
 
     def interface_choice(self,interface_val):
-        print(interface_val)
+
         self.start_time = time.time()
         if  self.running:
-            
+
             self.stop_check = True
             time.sleep(1)
             self.check_thread = threading.Thread(target=self.run_check,args=(interface_val,) ,daemon=True)
@@ -113,6 +113,7 @@ class test_form(QtGui.QMainWindow):
             self.check_thread.start()
 
         else:
+
             self.check_thread = threading.Thread(target=self.run_check,args=(interface_val,) ,daemon=True)
             self.check_thread.start()
             self.running = True
@@ -135,7 +136,9 @@ class test_form(QtGui.QMainWindow):
 
 
             if self.stop_check == True:
+
                 break
+                
             self.current_time = time.time()-self.start_time
             self.val = network_monitor.collect_data(interface_val)
             self.val_lst = self.val.split(":")
@@ -163,7 +166,7 @@ class test_form(QtGui.QMainWindow):
 
             self.prev_val = self.val_lst
 
-            #print("Time: "+str(round(self.current_time,2)) +"\tIncoming: "+str(round(self.bytes_recv,2))+"\tOutgoing: "+str(round(self.bytes_sent,2)))
+            print("Time: "+str(round(self.current_time,2)) +"\tIncoming: "+str(round(self.bytes_recv,2))+"\tOutgoing: "+str(round(self.bytes_sent,2)))
 
             self.incoming_curve.setData(self.time,self.incoming_list,pen='g')
             self.outgoing_curve.setData(self.time,self.outgoing_list,pen='r')

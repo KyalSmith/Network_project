@@ -24,8 +24,8 @@ def collect_data(interface):
         tmp = val.split("=")
         val_dict[tmp[0]] = tmp[1]
 
-    tmp_bytes["bytes_sent"] = float(val_dict["bytes_sent"])/(1000*n)
-    tmp_bytes["bytes_recv"] = float(val_dict["bytes_recv"])/(1000*n)
+    tmp_bytes["bytes_sent"] = float(val_dict["bytes_sent"])/n
+    tmp_bytes["bytes_recv"] = float(val_dict["bytes_recv"])/n
 
 
 

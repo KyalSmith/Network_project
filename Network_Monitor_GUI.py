@@ -148,10 +148,15 @@ class test_form(QtGui.QMainWindow):
 
             else:
                 self.time.append(self.current_time)
+
                 self.bytes_recv = float(self.val_lst[0]) - float(self.prev_val[0])
                 self.incoming_list.append(int(self.bytes_recv))
+                self.bytes_recv_val,self.bytes_recv_lbl = self.Determine_Label(self.bytes_recv)
+
+
                 self.bytes_sent = float(self.val_lst[1]) - float(self.prev_val[1])
                 self.outgoing_list.append(int(self.bytes_sent))
+                self.bytes_sent_val, self.bytes_sent_lbl = self.Determine_Label(self.bytes_sent)
 
                 if self.bytes_recv < 0:
 
@@ -161,8 +166,10 @@ class test_form(QtGui.QMainWindow):
 
                     self.bytes_sent = 0
 
-                self.incoming_val.setText(str(round(self.bytes_recv, 2)))
-                self.outgoing_val.setText(str(round(self.bytes_sent, 2)))
+                self.incoming_val.setText(str(self.bytes_recv_val))
+                self.incoming_metric.setText(self.bytes_recv_lbl +"/s")
+                self.outgoing_val.setText(str(self.bytes_sent_val))
+                self.outgoing_metric.setText(self.bytes_sent_lbl+"/s")
 
             self.prev_val = self.val_lst
 
@@ -180,8 +187,15 @@ class test_form(QtGui.QMainWindow):
         result_list = latest.decode('utf-8').split(",")
         time = result_list[2]
 
-        self.total_incoming_val.setText(str(result_list[0]))
-        self.total_outgoing_val.setText(str(round(float(result_list[1])/1000,2)))
+        self.total_incoming_mod,self.total_incoming_power = self.Determine_Label(result_list[0])
+        self.total_outgoing_mod, self.total_outgoing_power = self.Determine_Label(result_list[1])
+
+        self.total_incoming_val.setText(str(self.total_incoming_mod))
+        self.total_incoming_metric.setText(self.total_incoming_power)
+
+        self.total_outgoing_val.setText(str(self.total_outgoing_mod))
+        self.total_outgoing_metric.setText(self.total_outgoing_power)
+
         self.time_val.setText(time[:19])
 
 
@@ -192,7 +206,21 @@ class test_form(QtGui.QMainWindow):
         time.sleep(300)
 
         
+    def Determine_Label(self,val):
 
+        val = float(val)
+
+        if (val / 1000000000) >= 1:
+            return str(round((val/1000000000),2)),"GB"
+
+        elif (val / 1000000) >= 1:
+            return str(round((val/1000000),2)),"MB"
+
+        elif (val/1000) >=1 :
+            return str(round(val/1000,2)),"KB"
+
+        else:
+            return str(round(val,2)),"B"
 
 
 
